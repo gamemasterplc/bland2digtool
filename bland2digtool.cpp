@@ -309,6 +309,7 @@ void CalcFileRanges(std::string file_dir)
     for (size_t i = 0; i < dir_list.size(); i++) {
         //Align first file offset to 32 bytes
         size_t file_ofs = ((dir_list[i].files.size() * 16) + FILE_ALIGNMENT - 1) & ~(FILE_ALIGNMENT - 1);
+        std::cout << "Querying sizes from directory ID " << dir_list[i].id << "." << std::endl;
         for (size_t j = 0; j < dir_list[i].files.size(); j++) {
             uint32_t size;
             //Open file
@@ -430,7 +431,7 @@ void GenerateDIG(std::string in_file)
     std::string file_dir = list_dir + name + "/";
     tinyxml2::XMLDocument document;
     XMLCheck(document.LoadFile(in_file.c_str()));
-    tinyxml2::XMLElement *root = document.FirstChildElement();
+    tinyxml2::XMLElement *root = document.FirstChildElement("filelist");
     if (!root) {
         std::cout << "Invalid listing file." << std::endl;
         exit(1);
