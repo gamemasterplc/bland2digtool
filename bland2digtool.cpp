@@ -371,6 +371,19 @@ void CalcDirRanges()
     }
 }
 
+void PadFileToNextSector(FILE* file)
+{
+    //Go to end of the file
+    fseek(file, 0, SEEK_END);
+    //Write zero bytes until file is padded to next sector
+    size_t pos = ftell(file);
+    while (pos % 2048 != 0) {
+        uint8_t zero = 0;
+        fwrite(&zero, 1, 1, file);
+        pos++;
+    }
+}
+
 void WriteDirectoryList(FILE *file)
 {
     uint32_t num_dirs = GetNumDirs();
@@ -421,6 +434,7 @@ void WriteDIGFiles(FILE *file, std::string file_dir)
         }
     }
 }
+
 void GenerateDIG(std::string in_file)
 {
     //Generated strings from path
@@ -453,6 +467,7 @@ void GenerateDIG(std::string in_file)
     //Do DIG file write
     WriteDirectoryList(file);
     WriteDIGFiles(file, file_dir);
+    PadFileToNextSector(file);
     fclose(file);
 }
 
